@@ -239,9 +239,6 @@ namespace StudentAdministrationsSystem
                     Console.WriteLine("\nPress Enter to continue...");
                     Console.ReadLine();
                 }
-
-            
-
         }
     }
 }
