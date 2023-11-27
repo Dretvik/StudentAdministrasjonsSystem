@@ -59,11 +59,16 @@ namespace StudentAdministrationsSystem
                 {
                     Console.WriteLine($"- {grade.Subject.SubjectName}: {grade.GradeValue}");
                 }
+
+                double averageGrade = Grades.Select(grade => grade.GradeValue).Average();
+                Console.WriteLine($"\nAverage Grade: {averageGrade:F2}");
             }
             else
             {
                 Console.WriteLine($"\n{Name} has no recorded grades yet.");
             }
+            Console.WriteLine("\nPress Enter to continue...");
+            Console.ReadLine();
         }
     }
 }

@@ -18,8 +18,8 @@ namespace StudentAdministrationsSystem
             };
 
             // Subjects
-            Subject math = new Subject("M202", "Math", 10);
             Subject programming = new Subject("C101", "Programming", 15);
+            Subject math = new Subject("M202", "Math", 10);
             Subject english = new Subject("E201", "English", 10);
 
             while (true)
@@ -28,7 +28,7 @@ namespace StudentAdministrationsSystem
 
                 Console.WriteLine($"Hello and welcome to Student Administration System");
                 Console.WriteLine($"Please choose an option:");
-                Console.WriteLine($"1. Show class list \n2. Search for a student by ID \n\n0. Exit Program");
+                Console.WriteLine($"1. Show class list \n2. Search for a student by ID  \n3. Add a new student\n\n0. Exit Program");
 
                 string choice = Console.ReadLine();
 
@@ -39,6 +39,9 @@ namespace StudentAdministrationsSystem
                         break;
                     case "2":
                         SearchStudentByID(students);
+                        break;
+                    case "3":
+                        AddNewStudent(students);
                         break;
                     case "0":
                         Console.WriteLine("Exiting the program.");
@@ -57,37 +60,69 @@ namespace StudentAdministrationsSystem
                     Console.Clear();
 
                     Console.WriteLine($"Hello and welcome to Student Administration System");
-                    Console.WriteLine($"Please choose a student:");
-                    Console.WriteLine($"1. Ellie \n2. Espen \n3. Blazej \n4. Mathias \n5. Said \n\n0. Exit Program");
+                    Console.WriteLine($"Please choose a student or option:");
+                    for (int i = 0; i < students.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. {students[i].Name}");
+                    }
+                    Console.WriteLine($"\n{students.Count + 1}. Add a new student");
+                    Console.WriteLine($"0.Go back");
 
                     string choice = Console.ReadLine();
 
-                    switch (choice)
+                    if (int.TryParse(choice, out int selectedOption) && selectedOption >= 1 && selectedOption <= students.Count)
                     {
-                        case "1":
-                            PerformStudentActions(students[0]);
-                            break;
-                        case "2":
-                            PerformStudentActions(students[1]);
-                            break;
-                        case "3":
-                            PerformStudentActions(students[2]);
-                            break;
-                        case "4":
-                            PerformStudentActions(students[3]);
-                            break;
-                        case "5":
-                            PerformStudentActions(students[4]);
-                            break;
-                        case "0":
-                            Console.WriteLine("Go back..");
-                            return;
-                        default:
-                            Console.WriteLine("Invalid choice. Please try again.");
-                            break;
+                        PerformStudentActions(students[selectedOption - 1]);
+                    }
+                    else if (selectedOption == students.Count + 1)
+                    {
+                        AddNewStudent(students);
+                    }
+                    else if (selectedOption == 0)
+                    {
+                        Console.WriteLine("Go back..");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice. Please try again.");
                     }
                 }
             }
+
+            static void AddNewStudent(List<Student> students)
+            {
+                Console.Clear();
+                Console.WriteLine("Adding a new student:");
+
+                Console.Write("Enter the name of the student: ");
+                string name = Console.ReadLine();
+
+                Console.Write("Enter the age of the student: ");
+                if (int.TryParse(Console.ReadLine(), out int age))
+                {
+                    Console.Write("Enter the school of the student: ");
+                    string school = Console.ReadLine();
+
+                    Console.Write("Enter the student ID: ");
+                    if (int.TryParse(Console.ReadLine(), out int studentID))
+                    {
+                        students.Add(new Student(name, age, school, studentID));
+                        Console.WriteLine($"\nStudent {name} added successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter a valid integer for Student ID.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid integer for Age.");
+                }
+                Console.WriteLine("\nPress Enter to continue...");
+                Console.ReadLine();
+            }
+
             static void SearchStudentByID(List<Student> students)
             {
                 Console.Clear();
@@ -118,25 +153,23 @@ namespace StudentAdministrationsSystem
 
             static Student FindStudentByID(List<Student> students, int studentID)
             {
-                // Iterate through the list of students and find the one with the matching ID
                 foreach (Student student in students)
                 {
                     if (student.StudentID == studentID)
                     {
-                        return student; // Found the student
+                        return student; 
                     }
                 }
-
-                return null; // Student not found
+                return null;
             }
 
             return;
 
                 static void PerformStudentActions(Student student)
                 {
-                    Console.Clear();
                     while (true)
                     {
+                        Console.Clear();
 
                         Console.WriteLine($"\nChoose what you want to do with {student.Name}:");
                         Console.WriteLine(
@@ -164,9 +197,9 @@ namespace StudentAdministrationsSystem
 
                 static void AddSubjects(Student student)
                 {
-
                     while (true)
                     {
+                        Console.Clear();
                         Console.WriteLine($"\nAdd Subject to {student.Name}:");
                         Console.WriteLine($"1. Add Math \n2. Add Programming \n3. Add English");
                         Console.WriteLine("\n0.Go back to other student actions");
@@ -176,18 +209,15 @@ namespace StudentAdministrationsSystem
                         switch (choice)
                         {
                             case "1":
-                                student.AddSubject(new Subject("M202", "Math", 10));
-                                Console.WriteLine($"Math is added to {student.Name}'s subjects");
+                                AddSubjectToStudent(student, "M202", "Math", 10);
                                 break;
                             case "2":
-                                student.AddSubject(new Subject("C101", "Programming", 15));
-                                Console.WriteLine($"Programming is added to {student.Name}'s subjects");
+                                AddSubjectToStudent(student, "C101", "Programming", 15);
                                 break;
                             case "3":
-                                student.AddSubject(new Subject("E201", "English", 10));
-                                Console.WriteLine($"English is added to {student.Name}'s subjects");
+                                AddSubjectToStudent(student, "E201", "English", 10);
                                 break;
-                            case "0":
+                        case "0":
                                 Console.Clear();
                                 return;
                             default:
@@ -196,6 +226,24 @@ namespace StudentAdministrationsSystem
                         }
                     }
                 }
+
+                static void AddSubjectToStudent(Student student, string subjectCode, string subjectName,
+                    int subjectCredits)
+                {
+                    // Checking if the student already has the subject
+                    if (student.Subjects.Any(subject => subject.SubjectCode == subjectCode))
+                    {
+                        Console.WriteLine($"{student.Name} already has {subjectName} in their subjects.");
+                        return;
+                    }
+
+                    Subject newSubject = new Subject(subjectCode, subjectName, subjectCredits);
+                    student.AddSubject(newSubject);
+
+                    Console.WriteLine($"{subjectName} is added to {student.Name}'s subjects");
+                    Console.WriteLine("\nPress Enter to continue...");
+                    Console.ReadLine();
+            }
 
                 static void AddSubjectsGrade(Student student)
                 {
